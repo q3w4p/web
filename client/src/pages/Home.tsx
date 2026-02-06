@@ -6,15 +6,20 @@ import { Button } from "@/components/ui/button";
 import { useUser } from "@/hooks/use-auth";
 import { SiDiscord } from "react-icons/si";
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Home() {
   const { data: user } = useUser();
   const [activeStat, setActiveStat] = useState(0);
 
+  const { data: statsData } = useQuery<{ activeBots: number, totalUsers: number, uptime: string }>({
+    queryKey: ["/api/stats"],
+  });
+
   const stats = [
-    { label: "Active Bots", value: "2,400+" },
-    { label: "Total Users", value: "150k+" },
-    { label: "Uptime", value: "99.99%" },
+    { label: "Active Bots", value: statsData ? `${statsData.activeBots}+` : "..." },
+    { label: "Total Users", value: statsData ? `${statsData.totalUsers}` : "..." },
+    { label: "Uptime", value: statsData?.uptime || "99.9%" },
   ];
 
   useEffect(() => {
@@ -37,17 +42,19 @@ export default function Home() {
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="mb-10"
           >
-            <div className="w-20 h-20 rounded-3xl overflow-hidden border border-white/10 mx-auto shadow-2xl shadow-black mb-6 group">
+            <div className="w-24 h-24 rounded-3xl overflow-hidden border border-white/10 mx-auto shadow-2xl shadow-black mb-6 group">
               <img 
-                src="https://cdn.discordapp.com/attachments/1465030716118139095/1469105444948807882/1.jpeg?ex=69867290&is=69852110&hm=27d1f6242d0aa1a2d312aab51b6f55eb30fc2c3d9a9894a572e3e4b80bd00379" 
+                src="https://cdn.discordapp.com/attachments/1461273269058666619/1469322858755788891/1.jpeg?ex=69873d0c&is=6985eb8c&hm=3b9cd281dcaa3dc6be224f2ca083f0131e0d512db11f50f1d65ec8c34011bc48" 
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 alt="Hurry"
               />
             </div>
             <h1 className="text-6xl md:text-8xl font-bold font-display tracking-tighter mb-4">
-              <span className="text-gradient">Hurry</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 animate-gradient-x">Hurry</span>
             </h1>
-            <p className="text-lg text-white/40 font-medium max-w-lg mx-auto leading-relaxed"></p>
+            <p className="text-lg text-white/60 font-medium max-w-lg mx-auto leading-relaxed">
+              premium hosting for discord
+            </p>
           </motion.div>
 
           <motion.div

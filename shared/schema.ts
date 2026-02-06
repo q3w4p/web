@@ -35,7 +35,7 @@ export const botsRelations = relations(bots, ({ one }) => ({
 }));
 
 // === BASE SCHEMAS ===
-export const insertUserSchema = createInsertSchema(users).omit({ id: true, createdAt: true, isAdmin: true });
+export const insertUserSchema = createInsertSchema(users).omit({ id: true, createdAt: true });
 export const insertBotSchema = createInsertSchema(bots).omit({ id: true, createdAt: true, status: true });
 
 // === EXPLICIT API CONTRACT TYPES ===

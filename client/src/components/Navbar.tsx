@@ -26,7 +26,7 @@ export function Navbar() {
           <div className="flex items-center gap-3 cursor-pointer group">
             <div className="w-8 h-8 rounded-lg overflow-hidden border border-white/10 group-hover:scale-110 transition-transform duration-500">
               <img 
-                src="https://cdn.discordapp.com/attachments/1465030716118139095/1469105444948807882/1.jpeg?ex=69867290&is=69852110&hm=27d1f6242d0aa1a2d312aab51b6f55eb30fc2c3d9a9894a572e3e4b80bd00379"
+                src="https://cdn.discordapp.com/attachments/1461273269058666619/1469322858755788891/1.jpeg?ex=69873d0c&is=6985eb8c&hm=3b9cd281dcaa3dc6be224f2ca083f0131e0d512db11f50f1d65ec8c34011bc48"
                 alt="Logo"
                 className="w-full h-full object-cover"
               />

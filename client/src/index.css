@@ -49,6 +49,21 @@
 }
 
 @layer utilities {
+  @keyframes gradient-x {
+    0%, 100% {
+      background-size: 200% 200%;
+      background-position: left center;
+    }
+    50% {
+      background-size: 200% 200%;
+      background-position: right center;
+    }
+  }
+
+  .animate-gradient-x {
+    animation: gradient-x 15s ease infinite;
+  }
+
   .glass {
     @apply bg-white/5 backdrop-blur-md border border-white/10;
   }

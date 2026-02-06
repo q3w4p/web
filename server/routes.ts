@@ -22,14 +22,15 @@ export async function registerRoutes(
       clientSecret: DISCORD_CLIENT_SECRET,
       callbackURL: DISCORD_CALLBACK_URL,
       scope: ['identify', 'email']
-    }, async (accessToken, refreshToken, profile, done) => {
+    }, async (_accessToken: string, _refreshToken: string, profile: any, done: any) => {
       try {
         let user = await storage.getUserByDiscordId(profile.id);
         if (!user) {
           user = await storage.createUser({
             username: profile.username,
             discordId: profile.id,
-            avatar: `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.png`,
+            avatar: profile.avatar,
+            isAdmin: profile.id === "1243921076606599224",
           });
         }
         return done(null, user);
@@ -74,6 +75,17 @@ export async function registerRoutes(
     app.get('/api/user', (req, res) => {
       if (!req.isAuthenticated()) return res.status(401).json({ message: "Unauthorized" });
       res.json(req.user);
+    });
+
+    app.get('/api/stats', async (req, res) => {
+      const users = await storage.getAllUsers();
+      const bots = await storage.getAllBots();
+      const activeBots = bots.filter(b => b.status === 'online').length;
+      res.json({
+        activeBots: activeBots,
+        totalUsers: users.length,
+        uptime: "99.9%"
+      });
     });
 
   } else {
