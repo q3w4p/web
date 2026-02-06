@@ -11,8 +11,8 @@ export function Navbar() {
 
   const navItems = [
     { label: "Home", path: "/" },
-    { label: "Dashboard", path: "/dashboard" },
-    { label: "Admin", path: "/admin" },
+    ...(user && user.id !== 0 ? [{ label: "Dashboard", path: "/dashboard" }] : []),
+    ...(user && user.isAdmin ? [{ label: "Admin", path: "/admin" }] : []),
   ];
 
   return (
