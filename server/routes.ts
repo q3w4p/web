@@ -12,9 +12,13 @@ export async function registerRoutes(
 ): Promise<Server> {
   
   // Auth Setup
-  const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID;
-  const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET;
+  const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID || process.env.AI_INTEGRATIONS_DISCORD_CLIENT_ID;
+  const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET || process.env.AI_INTEGRATIONS_DISCORD_CLIENT_SECRET;
   const DISCORD_CALLBACK_URL = process.env.DISCORD_CALLBACK_URL || "https://nazireich.site/api/auth/discord/callback";
+
+  console.log("DEBUG: DISCORD_CLIENT_ID exists:", !!DISCORD_CLIENT_ID);
+  console.log("DEBUG: DISCORD_CLIENT_SECRET exists:", !!DISCORD_CLIENT_SECRET);
+  console.log("DEBUG: DISCORD_CALLBACK_URL:", DISCORD_CALLBACK_URL);
 
   app.use(passport.initialize());
   app.use(passport.session());
@@ -66,13 +70,11 @@ export async function registerRoutes(
       }
     );
   } else {
-    // Stub auth routes for testing/dev when secrets are missing
+    console.error("Discord Auth CRITICAL ERROR: Missing DISCORD_CLIENT_ID or DISCORD_CLIENT_SECRET.");
+    
     app.get('/api/auth/discord', (req, res) => {
-      console.log("Discord auth triggered (stub)");
-      res.redirect('/dashboard');
+      res.status(500).send("Authentication service not configured. Please check server environment variables.");
     });
-
-    console.warn("Discord Auth not configured. Missing DISCORD_CLIENT_ID or DISCORD_CLIENT_SECRET.");
   }
 
   app.post('/api/auth/logout', (req, res, next) => {
@@ -84,9 +86,6 @@ export async function registerRoutes(
 
   app.get('/api/user', (req, res) => {
     if (!req.isAuthenticated()) {
-      if (!DISCORD_CLIENT_ID || !DISCORD_CLIENT_SECRET) {
-         return res.json({ id: 0, username: "Guest", isAdmin: true, isAuthed: true, avatar: null });
-      }
       return res.status(401).json({ message: "Unauthorized" });
     }
     res.json(req.user);
@@ -109,19 +108,11 @@ export async function registerRoutes(
 
   const requireAuth = (req: any, res: any, next: any) => {
     if (req.isAuthenticated()) return next();
-    if (!DISCORD_CLIENT_ID || !DISCORD_CLIENT_SECRET) {
-      req.user = { id: 0, username: "Guest", isAdmin: true, isAuthed: true };
-      return next();
-    }
     res.status(401).json({ message: "Unauthorized" });
   };
 
   const requireAdmin = (req: any, res: any, next: any) => {
-    if (req.isAuthenticated() && req.user.isAdmin) return next();
-    if (!DISCORD_CLIENT_ID || !DISCORD_CLIENT_SECRET) {
-      req.user = { id: 0, username: "Guest", isAdmin: true, isAuthed: true };
-      return next();
-    }
+    if (req.isAuthenticated() && (req.user as any).isAdmin) return next();
     res.status(403).json({ message: "Forbidden" });
   };
 
