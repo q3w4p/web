@@ -1,319 +1,336 @@
-# Bot Hosting Platform
+# Hurry - Discord Bot Hosting Platform
 
-A web-based Discord bot hosting platform with token injection, built with Node.js, Express, PostgreSQL (Aiven), and WebSocket for real-time updates.
+A beautiful, modern PHP-based Discord bot hosting platform with animated UI, gradient effects, and real-time management.
 
-## Features
+## ✨ Features
 
-- 🚀 **Landing Page**: Professional landing page with animations
-- 🔐 **Discord Token Authentication**: Secure token validation and storage
-- 📊 **Admin Control Panel (ACCP)**: Real-time monitoring dashboard
-- 👥 **Multi-Account Support**: Host multiple Discord accounts simultaneously
-- 🔄 **Live Updates**: WebSocket-based real-time status updates
-- 📈 **Activity Logging**: Comprehensive action logging
-- 🗄️ **PostgreSQL Database**: Secure data storage with Aiven
+- 🎨 **Modern UI** - Gradient text, animated borders, and smooth transitions
+- 🔐 **Discord Authentication** - Token-based user authentication
+- 📊 **Admin Dashboard** - Real-time monitoring and management
+- 🤖 **Multi-Bot Support** - Host multiple Discord accounts
+- 📝 **Activity Logging** - Track all user actions
+- 🗄️ **PostgreSQL (Aiven)** - Secure cloud database
+- 🎭 **Animated Effects** - Gradient orbs, button borders, and more
 
-## Tech Stack
+## 🚀 Quick Start
 
-- **Backend**: Node.js, Express
-- **Database**: PostgreSQL (Aiven)
-- **Real-time**: WebSocket (ws)
-- **Frontend**: Vanilla JavaScript, CSS3
-- **Deployment**: Compatible with any VPS (Kamatera, DigitalOcean, etc.)
+### Prerequisites
 
-## Prerequisites
+- PHP 7.4+ with PDO PostgreSQL extension
+- PostgreSQL database (Aiven)
+- Apache/Nginx web server
+- cURL extension enabled
 
-- Node.js 20+ installed (LTS recommended)
-- Aiven PostgreSQL database account
-- Discord API access
-- VPS server (Kamatera or similar)
+### Installation
 
-## Installation
+1. **Upload Files**
+   ```bash
+   # Upload all files to your web server
+   /var/www/html/hurry/
+   ```
 
-### 1. Clone or Upload Files
+2. **Configure Database**
+   
+   Edit `config.php` with your Aiven credentials:
+   ```php
+   define('DB_HOST', 'hurry-hurry.g.aivencloud.com');
+   define('DB_PORT', '22637');
+   define('DB_NAME', 'defaultdb');
+   define('DB_USER', 'avnadmin');
+   define('DB_PASSWORD', 'AVNS__v7YcrlbWVN6jtm03JL');
+   ```
 
-Upload all files to your VPS server at `/var/www/bot-hosting-platform` or your preferred directory.
+3. **Set Admin Password**
+   
+   In `config.php`, change the admin password:
+   ```php
+   define('ADMIN_PASSWORD', 'YourSecurePassword123!');
+   ```
 
-### 2. Install Dependencies
+4. **Initialize Database**
+   ```bash
+   php setup-database.php
+   ```
 
-```bash
-cd /path/to/bot-hosting-platform
-npm install
-```
+5. **Set Permissions**
+   ```bash
+   chmod 755 *.php
+   chmod 755 assets/ -R
+   ```
 
-### 3. Configure Environment Variables
+6. **Access Platform**
+   - Main page: `https://yourdomain.com/`
+   - Host page: `https://yourdomain.com/host.php`
+   - Admin panel: `https://yourdomain.com/login.php`
 
-Copy `.env.example` to `.env`:
-
-```bash
-cp .env.example .env
-```
-
-Edit `.env` with your actual configuration:
-
-```env
-# Server Configuration
-PORT=3000
-NODE_ENV=production
-
-# Aiven PostgreSQL Database Configuration
-DB_HOST=your-aiven-hostname.aivencloud.com
-DB_PORT=12345
-DB_NAME=defaultdb
-DB_USER=avnadmin
-DB_PASSWORD=your-secure-password
-DB_SSL=true
-
-# Session Secret (generate a random string)
-SESSION_SECRET=your-random-secret-key-change-this
-
-# JWT Secret for token generation
-JWT_SECRET=your-jwt-secret-key-change-this
-
-# Admin Credentials
-ADMIN_USERNAME=admin
-ADMIN_PASSWORD=change-this-password
-
-# Discord API
-DISCORD_API_BASE=https://discord.com/api/v10
-
-# Go Bot Server Configuration (if applicable)
-GO_BOT_HOST=localhost
-GO_BOT_PORT=8080
-GO_BOT_API_KEY=your-bot-api-key
-```
-
-### 4. Initialize Database
-
-Run the database initialization script:
-
-```bash
-npm run init-db
-```
-
-This will create all necessary tables and indexes in your Aiven PostgreSQL database.
-
-### 5. Start the Server
-
-For production:
-```bash
-npm start
-```
-
-For development (with auto-restart):
-```bash
-npm run dev
-```
-
-The server will start on port 3000 (or your configured PORT).
-
-## Aiven PostgreSQL Setup
-
-### Getting Your Aiven Credentials
-
-1. Log in to [Aiven Console](https://console.aiven.io/)
-2. Create or select your PostgreSQL service
-3. From the service page, copy:
-   - **Host**: Found under "Connection Information"
-   - **Port**: Usually 12345 or similar
-   - **Database**: Default is `defaultdb`
-   - **User**: Usually `avnadmin`
-   - **Password**: Set during service creation
-4. SSL is automatically enabled for Aiven
-
-### Connection String Example
+## 📁 File Structure
 
 ```
-postgresql://avnadmin:password@hostname.aivencloud.com:12345/defaultdb?sslmode=require
+hurry-bot-platform/
+├── index.php              # Landing page
+├── host.php              # Discord token submission
+├── login.php             # Admin login
+├── logout.php            # Logout handler
+├── dashboard.php         # Admin dashboard
+├── config.php            # Configuration & DB connection
+├── setup-database.php    # Database initialization
+├── includes/
+│   └── functions.php     # Core functions
+└── assets/
+    ├── css/
+    │   ├── style.css     # Main styles
+    │   ├── host.css      # Host page styles
+    │   └── admin.css     # Admin panel styles
+    └── js/
+        ├── main.js       # Main JavaScript
+        └── dashboard.js  # Dashboard functions
 ```
 
-## Cloudflare Setup
+## 🎨 Features Breakdown
 
-### 1. Point Domain to Your Server
+### Landing Page
+- Animated gradient text "Hurry"
+- Floating gradient orbs background
+- Animated button borders on hover
+- Smooth parallax effects
+- Responsive design
 
-In Cloudflare DNS settings:
-- Add an A record pointing to your VPS IP address
-- Set Proxy status to "Proxied" (orange cloud)
+### Host Page
+- Discord token submission
+- Token validation via Discord API
+- Instructions for obtaining token
+- Copy-to-clipboard functionality
+- Success/error alerts
 
-### 2. SSL/TLS Settings
+### Admin Dashboard
+- Real-time statistics (users, active/inactive bots)
+- User management (start, stop, delete)
+- Bot instance monitoring
+- Activity logs
+- Auto-refresh every 30 seconds
 
-- Set SSL/TLS encryption mode to "Full" or "Full (strict)"
-- Enable "Always Use HTTPS"
+## 🔧 Configuration
 
-### 3. Reverse Proxy (Nginx)
+### Environment Settings
 
-Install and configure Nginx on your VPS:
+Edit `config.php` to customize:
 
+```php
+// Admin Credentials
+define('ADMIN_USERNAME', 'admin');
+define('ADMIN_PASSWORD', 'YourSecurePassword');
+
+// Session Security
+define('SESSION_SECRET', 'your-random-secret');
+
+// Discord API
+define('DISCORD_API_BASE', 'https://discord.com/api/v10');
+
+// Go Bot Integration (optional)
+define('GO_BOT_HOST', 'localhost');
+define('GO_BOT_PORT', '8080');
+define('GO_BOT_API_KEY', 'your-api-key');
+```
+
+### Web Server Configuration
+
+#### Apache (.htaccess)
+```apache
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [L,QSA]
+
+# Security Headers
+Header set X-Frame-Options "SAMEORIGIN"
+Header set X-Content-Type-Options "nosniff"
+Header set X-XSS-Protection "1; mode=block"
+```
+
+#### Nginx
 ```nginx
-server {
-    listen 80;
-    server_name yourdomain.com;
+location / {
+    try_files $uri $uri/ /index.php?$query_string;
+}
 
-    location / {
-        proxy_pass http://localhost:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    }
+location ~ \.php$ {
+    fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
+    fastcgi_index index.php;
+    include fastcgi_params;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+}
+
+# Security Headers
+add_header X-Frame-Options "SAMEORIGIN";
+add_header X-Content-Type-Options "nosniff";
+add_header X-XSS-Protection "1; mode=block";
+```
+
+## 🔌 Go Bot Integration
+
+To integrate with your Go bot, edit `includes/functions.php`:
+
+### Start Bot Function
+```php
+function startBot($userId) {
+    $user = getUserById($userId);
+    
+    // Call your Go bot API
+    $ch = curl_init();
+    curl_setopt_array($ch, [
+        CURLOPT_URL => 'http://' . GO_BOT_HOST . ':' . GO_BOT_PORT . '/start',
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => json_encode([
+            'token' => $user['discord_token'],
+            'userId' => $userId
+        ]),
+        CURLOPT_HTTPHEADER => [
+            'X-API-Key: ' . GO_BOT_API_KEY,
+            'Content-Type: application/json'
+        ],
+        CURLOPT_RETURNTRANSFER => true,
+    ]);
+    
+    $response = curl_exec($ch);
+    curl_close($ch);
+    
+    // Rest of the function...
 }
 ```
 
-Enable and restart Nginx:
+## 🎯 Usage
+
+### For Users
+
+1. Visit the main page
+2. Click "Get Started"
+3. Enter Discord token
+4. Wait for validation
+5. Account added successfully!
+
+### For Admins
+
+1. Click "Admin Panel" on main page
+2. Login with credentials
+3. View all users and statistics
+4. Start/stop bots for any user
+5. Delete users if needed
+6. Monitor activity logs
+
+## 🛡️ Security
+
+- ✅ Password-protected admin panel
+- ✅ Session management with secrets
+- ✅ SQL injection prevention (PDO prepared statements)
+- ✅ XSS protection (htmlspecialchars on all outputs)
+- ✅ CSRF protection (session tokens)
+- ✅ SSL/TLS encryption (Aiven)
+- ✅ Input validation
+
+### Recommendations
+
+1. **Change default admin password** immediately
+2. **Use HTTPS** - Configure SSL certificate
+3. **Regular backups** - Backup database regularly
+4. **Update PHP** - Keep PHP version current
+5. **Monitor logs** - Check activity logs regularly
+
+## 📊 Database Schema
+
+### Users Table
+```sql
+id              SERIAL PRIMARY KEY
+discord_token   VARCHAR(255) UNIQUE NOT NULL
+discord_username VARCHAR(255)
+discord_user_id VARCHAR(255)
+avatar_url      TEXT
+status          VARCHAR(50) DEFAULT 'inactive'
+created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+last_active     TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+```
+
+### Bot Instances Table
+```sql
+id              SERIAL PRIMARY KEY
+user_id         INTEGER REFERENCES users(id)
+instance_name   VARCHAR(255)
+status          VARCHAR(50) DEFAULT 'stopped'
+pid             INTEGER
+started_at      TIMESTAMP
+stopped_at      TIMESTAMP
+created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+```
+
+### Logs Table
+```sql
+id              SERIAL PRIMARY KEY
+user_id         INTEGER REFERENCES users(id)
+action          VARCHAR(255) NOT NULL
+details         TEXT
+ip_address      VARCHAR(45)
+created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+```
+
+## 🐛 Troubleshooting
+
+### Database Connection Failed
 ```bash
-sudo ln -s /etc/nginx/sites-available/bot-hosting /etc/nginx/sites-enabled/
-sudo nginx -t
-sudo systemctl restart nginx
+# Check PHP PDO PostgreSQL extension
+php -m | grep pdo_pgsql
+
+# Install if missing (Ubuntu/Debian)
+sudo apt-get install php-pgsql
+sudo systemctl restart apache2
 ```
 
-## Pages Overview
-
-### 1. Landing Page (`/`)
-- Main entry point with animated hero section
-- "Get Started" button → Host page
-- "Admin Panel" button → Admin login
-
-### 2. Host Page (`/host.html`)
-- Discord token submission form
-- Token validation and account addition
-- Instructions for obtaining Discord token
-
-### 3. Admin Panel (`/admin.html`)
-- Login required (credentials from .env)
-- Real-time user monitoring
-- Bot instance management
-- Activity logs
-- Statistics dashboard
-
-## API Endpoints
-
-### Public Endpoints
-- `POST /api/users/add` - Add Discord user with token
-
-### Admin Endpoints (Authentication Required)
-- `POST /api/admin/login` - Admin login
-- `POST /api/admin/logout` - Admin logout
-- `GET /api/admin/check` - Check admin status
-- `GET /api/users` - Get all users
-- `POST /api/bot/start` - Start bot instance
-- `POST /api/bot/stop` - Stop bot instance
-- `GET /api/bot/instances` - Get all bot instances
-- `DELETE /api/users/:id` - Delete user
-- `GET /api/logs` - Get activity logs
-
-## WebSocket Events
-
-### Client → Server
-- `ping` - Keep-alive ping
-
-### Server → Client
-- `pong` - Keep-alive response
-- `user_update` - User added/updated
-- `bot_status` - Bot started/stopped
-- `user_deleted` - User deleted
-
-## Integration with Go Bot
-
-To integrate with your existing Go bot:
-
-1. Update `server.js` in the bot start/stop functions
-2. Add API calls to your Go bot server:
-
-```javascript
-// Example in server.js
-await axios.post(`http://${process.env.GO_BOT_HOST}:${process.env.GO_BOT_PORT}/start`, {
-    token: user.discord_token,
-    userId: userId
-}, {
-    headers: { 'X-API-Key': process.env.GO_BOT_API_KEY }
-});
-```
-
-## Security Best Practices
-
-1. **Change Default Credentials**: Update admin username/password in .env
-2. **Use Strong Secrets**: Generate random strings for SESSION_SECRET and JWT_SECRET
-3. **Enable HTTPS**: Always use SSL/TLS in production
-4. **Database Security**: Use Aiven's built-in security features
-5. **Token Storage**: Tokens are stored encrypted in PostgreSQL
-6. **Rate Limiting**: Consider adding rate limiting for production
-
-## Process Management (PM2)
-
-For production deployment, use PM2:
-
+### Permission Denied
 ```bash
-# Install PM2
-npm install -g pm2
-
-# Start application
-pm2 start server.js --name "bot-hosting"
-
-# Enable auto-restart on server reboot
-pm2 startup
-pm2 save
-
-# Monitor
-pm2 monit
-
-# View logs
-pm2 logs bot-hosting
+# Set correct permissions
+chmod 755 *.php
+chmod 755 assets/ -R
+chown www-data:www-data -R .
 ```
 
-## Troubleshooting
+### Discord API Not Responding
+- Check if cURL is enabled: `php -m | grep curl`
+- Verify Discord API base URL in config.php
+- Check firewall settings
 
-### Database Connection Issues
-- Verify Aiven credentials in .env
-- Check if SSL is enabled (should be true for Aiven)
-- Ensure your VPS IP is whitelisted in Aiven (usually automatic)
+### Styles Not Loading
+- Verify file paths in HTML
+- Check web server configuration
+- Clear browser cache
 
-### WebSocket Connection Issues
-- Check if firewall allows WebSocket connections
-- Verify Cloudflare WebSocket support is enabled
-- Ensure proxy configuration passes Upgrade headers
+## 📝 Changelog
 
-### Token Validation Fails
-- Verify Discord API base URL is correct
-- Check if token format is valid
-- Ensure network can reach Discord API
+### Version 1.0.0
+- Initial release
+- Landing page with animated effects
+- Discord token authentication
+- Admin dashboard
+- User management
+- Bot instance control
+- Activity logging
 
-## File Structure
-
-```
-bot-hosting-platform/
-├── server.js                 # Main Express server
-├── init-database.js          # Database initialization
-├── package.json              # Dependencies
-├── .env                      # Environment variables
-├── .env.example             # Environment template
-└── public/
-    ├── index.html           # Landing page
-    ├── host.html            # Host page
-    ├── admin.html           # Admin panel
-    ├── css/
-    │   └── styles.css       # All styles
-    └── js/
-        ├── landing.js       # Landing page logic
-        ├── host.js          # Host page logic
-        └── admin.js         # Admin panel logic
-```
-
-## Support
+## 🤝 Support
 
 For issues or questions:
-1. Check the troubleshooting section
-2. Review server logs: `pm2 logs bot-hosting`
-3. Check database connection: `npm run init-db`
+1. Check troubleshooting section
+2. Review configuration settings
+3. Check server logs
+4. Verify database connection
 
-## License
+## 📄 License
 
-MIT License - Feel free to modify and use for your needs.
+MIT License - Free to use and modify
 
-## Contributing
+## 🙏 Credits
 
-Contributions are welcome! Please ensure:
-- Code follows existing style
-- Test thoroughly before submitting
-- Update documentation as needed
+- Design inspired by modern SaaS platforms
+- Icons: Unicode emojis
+- Fonts: System fonts
+- Database: Aiven PostgreSQL
+
+---
+
+**Made with ❤️ for the Discord bot hosting community**

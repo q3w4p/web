@@ -40,6 +40,7 @@ npm --version   # Should show 10.x or higher
 Install PM2 (Process Manager):
 ```bash
 npm install -g pm2
+
 ```
 
 Install Nginx:
