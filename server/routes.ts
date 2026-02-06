@@ -16,10 +16,6 @@ export async function registerRoutes(
   const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET || process.env.AI_INTEGRATIONS_DISCORD_CLIENT_SECRET;
   const DISCORD_CALLBACK_URL = process.env.DISCORD_CALLBACK_URL || "https://nazireich.site/api/auth/discord/callback";
 
-  console.log("DEBUG: DISCORD_CLIENT_ID exists:", !!DISCORD_CLIENT_ID);
-  console.log("DEBUG: DISCORD_CLIENT_SECRET exists:", !!DISCORD_CLIENT_SECRET);
-  console.log("DEBUG: DISCORD_CALLBACK_URL:", DISCORD_CALLBACK_URL);
-
   app.use(passport.initialize());
   app.use(passport.session());
 
