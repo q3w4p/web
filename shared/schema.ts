@@ -10,43 +10,48 @@ export const users = pgTable("users", {
   discordId: text("discord_id").notNull().unique(),
   avatar: text("avatar"),
   isAdmin: boolean("is_admin").default(false),
+  isAuthed: boolean("is_authed").default(false),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const bots = pgTable("bots", {
+export const accounts = pgTable("accounts", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull(), // Foreign key to users
-  name: text("name").notNull(),
   token: text("token").notNull(),
-  status: text("status").default("offline"), // online, offline, error
+  discordUsername: text("discord_username"),
+  discordAvatar: text("discord_avatar"),
+  guildsCount: integer("guilds_count").default(0),
+  friendsCount: integer("friends_count").default(0),
+  status: text("status").default("offline"), // online, offline, idle, dnd, invisible
+  pid: integer("pid"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
 // === RELATIONS ===
 export const usersRelations = relations(users, ({ many }) => ({
-  bots: many(bots),
+  accounts: many(accounts),
 }));
 
-export const botsRelations = relations(bots, ({ one }) => ({
+export const accountsRelations = relations(accounts, ({ one }) => ({
   user: one(users, {
-    fields: [bots.userId],
+    fields: [accounts.userId],
     references: [users.id],
   }),
 }));
 
 // === BASE SCHEMAS ===
 export const insertUserSchema = createInsertSchema(users).omit({ id: true, createdAt: true });
-export const insertBotSchema = createInsertSchema(bots).omit({ id: true, createdAt: true, status: true });
+export const insertAccountSchema = createInsertSchema(accounts).omit({ id: true, createdAt: true, status: true, pid: true, discordUsername: true, discordAvatar: true, guildsCount: true, friendsCount: true });
 
 // === EXPLICIT API CONTRACT TYPES ===
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 
-export type Bot = typeof bots.$inferSelect;
-export type InsertBot = z.infer<typeof insertBotSchema>;
+export type Account = typeof accounts.$inferSelect;
+export type InsertAccount = z.infer<typeof insertAccountSchema>;
 
-export type CreateBotRequest = InsertBot;
-export type UpdateBotRequest = Partial<InsertBot>;
+export type CreateAccountRequest = InsertAccount;
+export type UpdateAccountRequest = Partial<InsertAccount>;
 
 // Admin view types
-export type UserWithBots = User & { bots: Bot[] };
+export type UserWithAccounts = User & { accounts: Account[] };

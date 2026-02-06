@@ -30,11 +30,9 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col relative overflow-hidden text-white bg-fluid">
-      <Navbar />
-
+    <div className="min-h-screen flex flex-col relative overflow-hidden text-white bg-black">
       {/* Hero Section */}
-      <main className="flex-1 flex items-center justify-center relative pt-20">
+      <main className="flex-1 flex items-center justify-center relative pt-24">
         <div className="max-w-4xl mx-auto px-6 py-20 text-center relative z-10 load-up">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -50,7 +48,7 @@ export default function Home() {
               />
             </div>
             <h1 className="text-6xl md:text-8xl font-bold font-display tracking-tighter mb-4">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 animate-gradient-x">Hurry</span>
+              <span className="text-gradient">Hurry</span>
             </h1>
             <p className="text-lg text-white/60 font-medium max-w-lg mx-auto leading-relaxed">
               premium hosting for discord
@@ -65,13 +63,13 @@ export default function Home() {
           >
             {user ? (
               <Link href="/dashboard">
-                <Button className="rival-button rival-button-primary h-14 px-10 text-lg rounded-xl font-bold">
+                <Button className="rival-button rival-button-primary h-14 px-10 text-lg rounded-xl font-bold border-0 ring-0">
                   Dashboard
                 </Button>
               </Link>
             ) : (
               <a href="/api/auth/discord">
-                <Button className="rival-button rival-button-discord h-14 px-10 text-lg rounded-xl font-bold flex items-center gap-3">
+                <Button className="rival-button rival-button-discord h-14 px-10 text-lg rounded-xl font-bold flex items-center gap-3 border-0 ring-0">
                   <SiDiscord className="w-5 h-5" />
                   Add to Discord
                 </Button>

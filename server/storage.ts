@@ -1,4 +1,4 @@
-import { users, bots, type User, type InsertUser, type Bot, type InsertBot } from "@shared/schema";
+import { users, accounts, type User, type InsertUser, type Account, type InsertAccount } from "@shared/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
 
@@ -6,16 +6,18 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByDiscordId(discordId: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUserAuth(id: number, isAuthed: boolean): Promise<User>;
   
-  getBots(userId: number): Promise<Bot[]>;
-  getBot(id: number): Promise<Bot | undefined>;
-  createBot(bot: InsertBot): Promise<Bot>;
-  deleteBot(id: number): Promise<void>;
-  updateBotStatus(id: number, status: string): Promise<Bot>;
+  getAccounts(userId: number): Promise<Account[]>;
+  getAccount(id: number): Promise<Account | undefined>;
+  createAccount(account: InsertAccount): Promise<Account>;
+  deleteAccount(id: number): Promise<void>;
+  updateAccountStatus(id: number, status: string, pid?: number | null): Promise<Account>;
+  updateAccountDetails(id: number, details: Partial<Account>): Promise<Account>;
   
   // Admin
   getAllUsers(): Promise<User[]>;
-  getAllBots(): Promise<Bot[]>;
+  getAllAccounts(): Promise<Account[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -34,38 +36,51 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
-  async getBots(userId: number): Promise<Bot[]> {
-    return await db.select().from(bots).where(eq(bots.userId, userId));
+  async updateUserAuth(id: number, isAuthed: boolean): Promise<User> {
+    const [user] = await db.update(users).set({ isAuthed }).where(eq(users.id, id)).returning();
+    return user;
   }
 
-  async getBot(id: number): Promise<Bot | undefined> {
-    const [bot] = await db.select().from(bots).where(eq(bots.id, id));
-    return bot;
+  async getAccounts(userId: number): Promise<Account[]> {
+    return await db.select().from(accounts).where(eq(accounts.userId, userId));
   }
 
-  async createBot(insertBot: InsertBot): Promise<Bot> {
-    const [bot] = await db.insert(bots).values(insertBot).returning();
-    return bot;
+  async getAccount(id: number): Promise<Account | undefined> {
+    const [account] = await db.select().from(accounts).where(eq(accounts.id, id));
+    return account;
   }
 
-  async deleteBot(id: number): Promise<void> {
-    await db.delete(bots).where(eq(bots.id, id));
+  async createAccount(insertAccount: InsertAccount): Promise<Account> {
+    const [account] = await db.insert(accounts).values(insertAccount).returning();
+    return account;
   }
 
-  async updateBotStatus(id: number, status: string): Promise<Bot> {
-    const [bot] = await db.update(bots)
-      .set({ status })
-      .where(eq(bots.id, id))
+  async deleteAccount(id: number): Promise<void> {
+    await db.delete(accounts).where(eq(accounts.id, id));
+  }
+
+  async updateAccountStatus(id: number, status: string, pid?: number | null): Promise<Account> {
+    const [account] = await db.update(accounts)
+      .set({ status, pid: pid !== undefined ? pid : undefined })
+      .where(eq(accounts.id, id))
       .returning();
-    return bot;
+    return account;
+  }
+
+  async updateAccountDetails(id: number, details: Partial<Account>): Promise<Account> {
+    const [account] = await db.update(accounts)
+      .set(details)
+      .where(eq(accounts.id, id))
+      .returning();
+    return account;
   }
 
   async getAllUsers(): Promise<User[]> {
     return await db.select().from(users);
   }
 
-  async getAllBots(): Promise<Bot[]> {
-    return await db.select().from(bots);
+  async getAllAccounts(): Promise<Account[]> {
+    return await db.select().from(accounts);
   }
 }
 
