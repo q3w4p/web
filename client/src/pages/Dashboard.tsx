@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Plus, Play, Square, Trash2, CheckCircle2, XCircle, Users, Activity, ShieldCheck, User as UserIcon, MoreVertical, Key } from "lucide-react";
+import { Loader2, Plus, Play, Square, Trash2, CheckCircle2, XCircle, Users, Activity, ShieldCheck, User as UserIcon, MoreVertical, Key, Search } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
@@ -77,29 +77,29 @@ export default function Dashboard() {
   );
 
   return (
-    <div className="container max-w-7xl mx-auto p-6 md:p-8 space-y-8 animate-in fade-in duration-500">
+    <div className="container max-w-7xl mx-auto p-4 md:p-6 space-y-6 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h2 className="text-4xl font-black tracking-tight text-white mb-2 font-display">Dashboard</h2>
-          <p className="text-slate-400 text-lg">Your discord infrastructure at a glance.</p>
+          <h2 className="text-3xl font-bold tracking-tight text-white mb-1 font-display">Hosted Accounts</h2>
+          <p className="text-slate-400 text-sm">Manage your hosted Discord accounts</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <Button 
             onClick={() => validateMutation.mutate()} 
             disabled={validateMutation.isPending || !accounts?.length}
             variant="outline"
-            className="border-white/10 hover:bg-white/5"
+            className="border-amber-500/20 text-amber-500 hover:bg-amber-500/10 h-9"
             data-testid="button-validate-users"
           >
-            {validateMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <ShieldCheck className="h-4 w-4 mr-2" />}
-            Validate Status
+            {validateMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <CheckCircle2 className="h-4 w-4 mr-2" />}
+            Validate All
           </Button>
 
           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-purple-600 hover:bg-purple-500 shadow-lg shadow-purple-500/20" data-testid="button-add-account-modal">
+              <Button className="bg-purple-600/20 text-purple-400 border border-purple-500/30 hover:bg-purple-600/30 h-9" data-testid="button-add-account-modal">
                 <Plus className="h-4 w-4 mr-2" />
-                Add Account
+                Host New
               </Button>
             </DialogTrigger>
             <DialogContent className="bg-[#121216] border-white/10 text-white">
@@ -148,121 +148,100 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-3">
         {[
-          { title: "Verification", value: user?.isAuthed ? "Authorized" : "Pending", icon: ShieldCheck, color: user?.isAuthed ? "text-emerald-500" : "text-rose-500", bg: user?.isAuthed ? "bg-emerald-500/10" : "bg-rose-500/10" },
-          { title: "Accounts", value: accounts?.length || 0, icon: Users, color: "text-purple-400", bg: "bg-purple-500/10" },
-          { title: "Active PIDs", value: accounts?.filter(a => a.status === 'online').length || 0, icon: Activity, color: "text-blue-400", bg: "bg-blue-500/10" }
+          { title: "Accounts Hosted", value: accounts?.length || "-", icon: Users, color: "text-purple-400", bg: "bg-purple-500/5" },
+          { title: "Hosting Limit", value: 5, icon: ShieldCheck, color: "text-purple-400", bg: "bg-purple-500/5" },
+          { title: "Slots Available", value: Math.max(0, 5 - (accounts?.length || 0)) || "-", icon: Activity, color: "text-purple-400", bg: "bg-purple-500/5" }
         ].map((stat, i) => (
-          <Card key={i} className="bg-[#121216] border-white/5 hover:border-white/10 transition-colors hover-elevate">
-            <CardHeader className="flex flex-row items-center justify-between pb-2 gap-1">
-              <span className="text-xs font-bold uppercase tracking-widest text-slate-500">{stat.title}</span>
-              <div className={`p-2 rounded-lg ${stat.bg} ${stat.color}`}>
-                <stat.icon className="h-4 w-4" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-black text-white font-display">{stat.value}</div>
-            </CardContent>
+          <Card key={i} className="bg-[#0c0c0e] border-white/5 h-28 flex flex-col items-center justify-center">
+            <div className="text-2xl font-bold text-purple-400 mb-1">{stat.value}</div>
+            <div className="text-[10px] font-bold uppercase tracking-widest text-slate-600">{stat.title}</div>
           </Card>
         ))}
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {accounts?.map((acc) => (
-          <Card key={acc.id} className="bg-[#121216] border-white/5 group hover:border-purple-500/30 transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/5">
-            <CardHeader className="pb-4">
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="relative">
-                    <Avatar className="h-14 w-14 border-2 border-[#1a1a20]">
-                      <AvatarImage src={acc.discordAvatar || undefined} />
-                      <AvatarFallback className="bg-gradient-to-br from-purple-600 to-blue-600 text-white"><UserIcon /></AvatarFallback>
-                    </Avatar>
-                    <div className={`absolute bottom-0 right-0 h-4 w-4 rounded-full border-4 border-[#121216] ${acc.status === 'online' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]' : 'bg-slate-600'}`} />
-                  </div>
-                  <div className="flex flex-col">
-                    <h3 className="text-lg font-bold text-white group-hover:text-purple-400 transition-colors truncate max-w-[140px] font-display">
+      <Card className="bg-[#0c0c0e] border-white/5 overflow-hidden">
+        <div className="p-4 border-b border-white/5 flex items-center justify-between">
+          <h3 className="text-sm font-bold text-white">Your Accounts</h3>
+        </div>
+        <div className="p-4 space-y-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-600" />
+            <Input 
+              placeholder="Search by username or ID..." 
+              className="bg-[#08080a] border-white/5 pl-10 h-10 text-sm"
+            />
+          </div>
+          
+          <div className="grid gap-3">
+            {accounts?.map((acc) => (
+              <div key={acc.id} className="flex items-center justify-between p-3 bg-[#08080a] border border-white/5 rounded-lg group">
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-10 w-10 border border-white/5">
+                    <AvatarImage src={acc.discordAvatar || undefined} />
+                    <AvatarFallback className="bg-purple-900/20 text-purple-400 text-xs"><UserIcon className="h-4 w-4" /></AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <div className="text-sm font-bold text-white group-hover:text-purple-400 transition-colors">
                       {acc.discordUsername || "New Instance"}
-                    </h3>
-                    <div className="flex items-center gap-1 mt-0.5">
-                      <Badge variant="outline" className="text-[10px] font-mono border-white/5 text-slate-500 py-0 px-1.5">
-                        {acc.token.substring(0, 6)}...
-                      </Badge>
+                    </div>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <div className={`h-1.5 w-1.5 rounded-full ${acc.status === 'online' ? 'bg-emerald-500' : 'bg-slate-600'}`} />
+                      <span className="text-[10px] text-slate-500 font-mono">{acc.token.substring(0, 8)}...</span>
+                      <span className="text-[10px] text-slate-500">•</span>
+                      <span className="text-[10px] text-slate-500">{acc.guildsCount} Guilds</span>
+                      <span className="text-[10px] text-slate-500">•</span>
+                      <span className="text-[10px] text-slate-500">{acc.friendsCount} Friends</span>
                     </div>
                   </div>
                 </div>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="text-slate-600 hover:text-rose-500 hover:bg-rose-500/10"
-                  onClick={() => deleteMutation.mutate(acc.id)}
-                  data-testid={`button-delete-${acc.id}`}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-2 gap-3">
-                <div className="bg-[#0a0a0c] p-3 rounded-xl border border-white/5">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Guilds</span>
-                  <span className="text-lg font-black text-white font-display">{acc.guildsCount}</span>
-                </div>
-                <div className="bg-[#0a0a0c] p-3 rounded-xl border border-white/5">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Friends</span>
-                  <span className="text-lg font-black text-white font-display">{acc.friendsCount}</span>
-                </div>
-              </div>
-
-              {acc.pid && (
-                <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-emerald-500/5 border border-emerald-500/10">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-500/60">Active PID</span>
-                  <span className="font-mono text-xs text-emerald-400 font-bold">{acc.pid}</span>
-                </div>
-              )}
-
-              <div className="flex gap-2 pt-2">
-                {acc.status === 'online' ? (
+                
+                <div className="flex items-center gap-2">
+                  {acc.status === 'online' ? (
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      className="h-8 px-3 text-rose-500 hover:bg-rose-500/10 text-xs font-bold"
+                      onClick={() => stopMutation.mutate(acc.id)}
+                      disabled={stopMutation.isPending}
+                    >
+                      Disconnect
+                    </Button>
+                  ) : (
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      className="h-8 px-3 text-purple-400 hover:bg-purple-500/10 text-xs font-bold"
+                      onClick={() => startMutation.mutate(acc.id)}
+                      disabled={startMutation.isPending}
+                    >
+                      Deploy
+                    </Button>
+                  )}
                   <Button 
-                    variant="outline" 
-                    className="flex-1 bg-rose-500/5 border-rose-500/20 text-rose-500 hover:bg-rose-500 hover:text-white transition-all duration-300 font-bold"
-                    onClick={() => stopMutation.mutate(acc.id)}
-                    disabled={stopMutation.isPending}
-                    data-testid={`button-stop-${acc.id}`}
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-8 w-8 text-slate-600 hover:text-rose-500"
+                    onClick={() => deleteMutation.mutate(acc.id)}
                   >
-                    <Square className="h-4 w-4 mr-2 fill-current" />
-                    Kill PID
+                    <Trash2 className="h-4 w-4" />
                   </Button>
-                ) : (
-                  <Button 
-                    className="flex-1 bg-purple-600 hover:bg-purple-500 shadow-lg shadow-purple-500/20 font-bold"
-                    onClick={() => startMutation.mutate(acc.id)}
-                    disabled={startMutation.isPending}
-                    data-testid={`button-start-${acc.id}`}
-                  >
-                    <Play className="h-4 w-4 mr-2 fill-current" />
-                    Deploy Instance
-                  </Button>
-                )}
+                </div>
               </div>
-            </CardContent>
-          </Card>
-        ))}
+            ))}
 
-        {accounts?.length === 0 && (
-          <button 
-            onClick={() => setIsModalOpen(true)}
-            className="flex flex-col items-center justify-center p-12 bg-[#121216]/50 border-2 border-dashed border-white/5 rounded-2xl hover:border-purple-500/30 hover:bg-purple-500/5 transition-all group"
-          >
-            <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-              <Plus className="h-8 w-8 text-slate-600 group-hover:text-purple-500" />
-            </div>
-            <h3 className="text-lg font-bold text-slate-300 group-hover:text-white">Link Account</h3>
-            <p className="text-sm text-slate-500">Host your first Discord instance.</p>
-          </button>
-        )}
-      </div>
+            {accounts?.length === 0 && !isLoading && (
+              <div className="flex flex-col items-center justify-center py-12 text-slate-600">
+                <div className="bg-white/5 p-4 rounded-full mb-4">
+                  <Activity className="h-8 w-8" />
+                </div>
+                <p className="text-sm">No accounts hosted yet.</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </Card>
     </div>
   );
 }
