@@ -36,9 +36,16 @@ export async function registerRoutes(
             isAdmin: profile.id === "1243921076606599224",
             isAuthed: false,
           });
+        } else {
+          // Update user info if they already exist
+          await storage.updateUser(user.id, {
+            username: profile.username,
+            avatar: profile.avatar,
+          });
         }
         return done(null, user);
       } catch (err) {
+        console.error("Discord Auth Strategy Error:", err);
         return done(err as Error, undefined);
       }
     }));

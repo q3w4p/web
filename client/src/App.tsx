@@ -33,7 +33,11 @@ function ProtectedRoute({ component: Component, adminOnly = false }: { component
     );
   }
 
-  if (!user || user.id === 0) {
+  if (!user) {
+    return <Redirect to="/" />;
+  }
+
+  if (user.id === 0) {
     return <Redirect to="/" />;
   }
 
