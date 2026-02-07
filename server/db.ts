@@ -6,7 +6,7 @@ const { Pool } = pg;
 
 // Aiven Database Configuration
 const poolConfig = {
-  connectionString: "postgres://avnadmin:AVNS__v7YcrlbWVN6jtm03JL@hurry-hurry.g.aivencloud.com:22637/defaultdb?sslmode=require",
+  connectionString: process.env.DATABASE_URL || "postgres://avnadmin:AVNS__v7YcrlbWVN6jtm03JL@hurry-hurry.g.aivencloud.com:22637/defaultdb?sslmode=require",
   ssl: {
     rejectUnauthorized: false // Required for Aiven
   }
