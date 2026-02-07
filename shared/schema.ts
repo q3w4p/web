@@ -18,6 +18,7 @@ export const accounts = pgTable("accounts", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull(), // Foreign key to users
   token: text("token").notNull(),
+  prefix: text("prefix").default("!"),
   discordUsername: text("discord_username"),
   discordAvatar: text("discord_avatar"),
   guildsCount: integer("guilds_count").default(0),
