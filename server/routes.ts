@@ -12,8 +12,8 @@ export async function registerRoutes(
 ): Promise<Server> {
   
   // Auth Setup
-  const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID || process.env.AI_INTEGRATIONS_DISCORD_CLIENT_ID;
-  const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET || process.env.AI_INTEGRATIONS_DISCORD_CLIENT_SECRET;
+  const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID;
+  const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET;
   const DISCORD_CALLBACK_URL = process.env.DISCORD_CALLBACK_URL || "https://nazireich.site/api/auth/discord/callback";
 
   app.use(passport.initialize());

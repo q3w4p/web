@@ -1,7 +1,5 @@
 import { motion } from "framer-motion";
 import { Link } from "wouter";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/hooks/use-auth";
 import { SiDiscord } from "react-icons/si";
@@ -30,7 +28,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col relative overflow-hidden text-white bg-black">
+    <div className="flex flex-col relative overflow-hidden text-white bg-transparent">
       {/* Hero Section */}
       <main className="flex-1 flex items-center justify-center relative pt-24">
         <div className="max-w-4xl mx-auto px-6 py-20 text-center relative z-10 load-up">
@@ -90,8 +88,6 @@ export default function Home() {
           </motion.div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }

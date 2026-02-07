@@ -46,7 +46,7 @@ function ProtectedRoute({ component: Component, adminOnly = false }: { component
 
 function Router() {
   return (
-    <div className="min-h-screen flex flex-col relative overflow-hidden text-white bg-black">
+    <div className="min-h-screen flex flex-col relative overflow-hidden text-white bg-transparent">
       <Navbar />
       <main className="flex-1 relative pt-24 pb-12 overflow-y-auto">
         <Switch>
@@ -57,7 +57,9 @@ function Router() {
           <Route path="/admin">
             <ProtectedRoute component={Admin} adminOnly />
           </Route>
-          <Route path="/get-token" component={GetToken} />
+          <Route path="/get-token">
+            <ProtectedRoute component={GetToken} />
+          </Route>
           <Route component={NotFound} />
         </Switch>
       </main>
