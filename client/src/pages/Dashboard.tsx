@@ -22,12 +22,15 @@ export default function Dashboard() {
 
   const createMutation = useMutation({
     mutationFn: async (token: string) => {
-      await apiRequest("POST", "/api/accounts", { token });
+      const res = await apiRequest("POST", "/api/accounts", { token });
+      return res.json();
     },
     onSuccess: () => {
       setNewToken("");
       setIsModalOpen(false);
       queryClient.invalidateQueries({ queryKey: ["/api/accounts"] });
+      // Trigger validation immediately after adding to get username
+      validateMutation.mutate();
       toast({ title: "Account linked successfully" });
     }
   });
