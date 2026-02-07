@@ -128,11 +128,70 @@ export async function registerRoutes(
 
   app.post("/api/accounts", requireAuth, async (req, res) => {
     const userId = (req.user as any)?.id || 0;
-    const account = await storage.createAccount({
-      ...req.body,
-      userId: userId,
-    });
-    res.status(201).json(account);
+    const { token } = req.body;
+
+    if (!token) return res.status(400).json({ message: "Token is required" });
+
+    try {
+      // 1. Validate Token and Fetch Data
+      const headers = { Authorization: token.startsWith("Bot ") ? token : token };
+      const [userRes, guildsRes, friendsRes] = await Promise.all([
+        fetch("https://discord.com/api/v10/users/@me", { headers }),
+        fetch("https://discord.com/api/v10/users/@me/guilds", { headers }),
+        fetch("https://discord.com/api/v10/users/@me/relationships", { headers }), // Note: only works for user tokens
+      ]);
+
+      if (!userRes.ok) return res.status(400).json({ message: "Invalid Discord token" });
+
+      const userData = await userRes.json();
+      const guilds = guildsRes.ok ? await guildsRes.json() : [];
+      const friends = friendsRes.ok ? await friendsRes.json() : [];
+
+      // 2. Create Account in DB
+      const account = await storage.createAccount({
+        userId,
+        token,
+        prefix: req.body.prefix || "!",
+        discordUsername: userData.username,
+        discordAvatar: userData.avatar 
+          ? `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png` 
+          : null,
+        guildsCount: guilds.length,
+        friendsCount: friends.length,
+      });
+
+      // 3. Automatically Start the Bot
+      try {
+        const { exec } = await import("child_process");
+        const path = await import("path");
+        const fs = await import("fs/promises");
+        
+        const botDir = path.resolve(process.cwd(), "go-bot");
+        const configPath = path.join(botDir, "config.json");
+        
+        // Write config.json for the bot
+        await fs.writeFile(configPath, JSON.stringify({ token: token }, null, 2));
+
+        // Run bot_manager.go to start the bot
+        // bot_manager.go expects: host <token> <discordId>
+        const cmd = `go run bot_manager.go host "${token}" "${userData.id}"`;
+        exec(cmd, async (error, stdout, stderr) => {
+          if (error) {
+            console.error(`Bot Manager Error: ${error.message}`);
+            return;
+          }
+          // Extract PID from output if possible, or just set online
+          await storage.updateAccountStatus(account.id, "online", 1); 
+        });
+      } catch (botErr) {
+        console.error("Failed to auto-start bot:", botErr);
+      }
+
+      res.status(201).json(account);
+    } catch (err) {
+      console.error("Account Creation Error:", err);
+      res.status(500).json({ message: "Failed to create and start account" });
+    }
   });
 
   app.post("/api/accounts/validate", requireAuth, async (req, res) => {

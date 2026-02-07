@@ -52,12 +52,14 @@ func main() {
                         fmt.Println("Token required")
                         return
                 }
-                pid, err := pm.StartBot(os.Args[2], os.Args[3])
+                // In this environment, we execute from the root, so we need to ensure main.go is found in go-bot/
+                cmd := exec.Command("pm2", "start", "go run main.go", "--name", os.Args[3], "--interpreter", "none", "--cwd", "./go-bot")
+                err := cmd.Start()
                 if err != nil {
                         fmt.Printf("Error: %v\n", err)
                         return
                 }
-                fmt.Printf("PID: %d\n", pid)
+                fmt.Printf("PID: %d\n", cmd.Process.Pid)
         case "kill":
                 if len(os.Args) < 3 {
                         fmt.Println("PID required")
