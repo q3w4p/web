@@ -6,11 +6,7 @@ const { Pool } = pg;
 
 // Aiven Database Configuration
 const poolConfig = {
-  host: 'hurry-hurry.g.aivencloud.com',
-  port: 22637,
-  database: 'defaultdb',
-  user: 'avnadmin',
-  password: 'AVNS__v7YcrlbWVN6jtm03JL',
+  connectionString: "postgres://avnadmin:AVNS__v7YcrlbWVN6jtm03JL@hurry-hurry.g.aivencloud.com:22637/defaultdb?sslmode=require",
   ssl: {
     rejectUnauthorized: false // Required for Aiven
   }
